@@ -1,4 +1,5 @@
 ---
+---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
@@ -9,8 +10,6 @@ spec:
     default: {{ .Values.git.repo }}
   - name: git-branch
     default: {{ .Values.git.branch }}
-  - name: app-subdir
-    default: customers-tomcat-gitops
   - name: target-namespace
     default: {{ .Values.namespace }}
   - name: output-image
@@ -47,7 +46,7 @@ spec:
       value:
       - "package"
     - name: subdirectory
-      value: source/$(params.app-subdir)
+      value: source
     workspaces:
     - name: source
       workspace: ws
@@ -62,9 +61,9 @@ spec:
     - name: IMAGE
       value: $(params.output-image)
     - name: DOCKERFILE
-      value: ./source/$(params.app-subdir)/Dockerfile
+      value: ./source/Dockerfile
     - name: CONTEXT
-      value: ./source/$(params.app-subdir)
+      value: ./source
     - name: TLSVERIFY
       value: "false"
     workspaces:
@@ -82,9 +81,10 @@ spec:
     - name: target-branch
       value: $(params.git-branch)
     - name: config-subdirectory
-      value: helm/$(params.app-subdir)
+      value: helm
     - name: git-root-directory
       value: source
     workspaces:
     - name: source
       workspace: ws
+
